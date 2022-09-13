@@ -1,8 +1,9 @@
 /* Models */
 
 export class Movie {
-    constructor(image, title, genre, releaseDate, rated, imdbScore,
+    constructor(id, image, title, genre, releaseDate, rated, imdbScore,
                 directors, actors, duration, countries, boxOfficeResult, abstract) {
+        this.id = id;
         this.image = image;
         this.title = title;
         this.genre = genre;
@@ -15,17 +16,5 @@ export class Movie {
         this.countries = countries;
         this.boxOfficeResult = boxOfficeResult;
         this.abstract = abstract;
-    }
-}
-
-
-export class Category {
-    constructor(genre) {
-        this.genre = genre;
-        this.movies = [];
-    }
-
-    addMovie(movie) {
-        this.movies.push(movie);
     }
 }
