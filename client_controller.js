@@ -1,6 +1,26 @@
 /* Model */
 
 
+class Movie {
+    constructor(id, image, title, genre, releaseDate, rated, imdbScore,
+                directors, actors, duration, countries, boxOfficeResult, abstract) {
+        this.id = id;
+        this.image = image;
+        this.title = title;
+        this.genre = genre;
+        this.releaseDate = releaseDate;
+        this.rated = rated;
+        this.imdbScore = imdbScore;
+        this.directors = directors;
+        this.actors = actors;
+        this.duration = duration;
+        this.countries = countries;
+        this.boxOfficeResult = boxOfficeResult;
+        this.abstract = abstract;
+    }
+}
+
+
 class Category {
     constructor(genre) {
         this.genre = genre;
@@ -15,10 +35,6 @@ class Category {
             this.imdbScoreMovies.push(emptyElement);
         }
     }
-
-    /* addMovie(movie) {
-        this.imdbScoreMovies.push(movie);
-    } */
 }
 
 
@@ -32,7 +48,7 @@ const titlesUrl = "http://localhost:8000/api/v1/titles/";
 const firstUrls = [ titlesUrl + "?page=17150", titlesUrl + "?genre=Action&page=2570",
                     titlesUrl + "?genre=Family&page=770", titlesUrl + "?genre=Comedy&page=5850" ];
 
-async function getMoviesTitlesData(url) {
+async function getMoviesData(url) {
     try {
         const result = await fetch(url);
         const value = await result.json();
@@ -60,7 +76,7 @@ async function searchImdbScoresMax(genreIndex, firstUrl, lastUrl = null) {
     let nextUrl = firstUrl;
     while (nextUrl != lastUrl) {
         try {
-            let value = await getMoviesTitlesData(nextUrl);
+            let value = await getMoviesData(nextUrl);
             rankBestMovies(genreIndex, value.results);
             nextUrl = value.next;
         } catch (error) {
@@ -68,15 +84,26 @@ async function searchImdbScoresMax(genreIndex, firstUrl, lastUrl = null) {
             break;
         }
     }
-    /* for (let movie of categories[0].imdbScoreMovies) {
-        console.log(`${movie.id} ${movie.imdbScore} ${movie.imageUrl}`);
-    } */
+}
+
+async function storeMovieData(id) {
+    let idUrl = titlesUrl + id;
+    try {
+        const value = await getMoviesData(idUrl);
+        return new Movie(value.id, value.image_url, value.title, value.genres, value.year, value.rated,
+                         value.imdbScore, value.directors, value.actors, value.duration, value.countries,
+                         value.worldwide_gross_income, value.long_description);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function main() {
     Promise.all([searchImdbScoresMax(0, firstUrls[0]), searchImdbScoresMax(1, firstUrls[1]),
                 searchImdbScoresMax(2, firstUrls[2]), searchImdbScoresMax(3, firstUrls[3])])
-    .then(() => {
+    .then(async () => {
+        const topMovie = await storeMovieData(categories[0].imdbScoreMovies[0].id);
+        console.log(topMovie.title);
         for (let categorie of categories) {
             console.log(categorie.genre);
             for (let movie of categorie.imdbScoreMovies) {
