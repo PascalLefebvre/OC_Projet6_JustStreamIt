@@ -2,12 +2,12 @@
 
 
 class Movie {
-    constructor(id, image, title, genre, releaseDate, rated, imdbScore,
+    constructor(id, imageUrl, title, genres, releaseDate, rated, imdbScore,
                 directors, actors, duration, countries, boxOfficeResult, abstract) {
         this.id = id;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.releaseDate = releaseDate;
         this.rated = rated;
         this.imdbScore = imdbScore;
@@ -47,11 +47,11 @@ class Category {
 
 
 function updateHomePageData() {
-    // Load top movie data all categories
-    document.querySelector("#banniere_film img").src = categories.all.movies[0].image;
+    // Load the best movie data (all categories)
+    document.querySelector("#banniere_film img").src = categories.all.movies[0].imageUrl;
     document.querySelector("#banniere_film h3").textContent = categories.all.movies[0].title;
     document.querySelector("#banniere_film p").textContent = categories.all.movies[0].abstract;
-    //
+    // Load the top movies images by category
     const categoryImages = document.querySelectorAll(".category img");
     let i = 0;
     for (const category in categories) {
@@ -67,23 +67,64 @@ function updateHomePageData() {
             }
         }
     }
-    /*for (let catIndex in genres) {
-        if (catIndex == 0) { var i = 1 } else { var i = 0 };
-        var categoryImages = document.querySelectorAll(categoryHtmlId[catIndex]);
-        while (i < categories.genres[catIndex].imdbScoreMovies.length) {
-            categoryImages[i].src = categories.all.imdbScoreMovies[i].imageUrl;
-            i++;
+}
+
+function fillModalWindow(movie) {
+    var modalImage = document.querySelector('.modal-content img');
+    var modalContent = document.querySelector('.modal-content p');
+    modalImage.src = movie.imageUrl;
+    modalContent.innerHTML = `<p>Titre : ${movie.title}<br>Genre(s) : ${movie.genres}
+        <br>Date de sortie : ${movie.releaseDate}<br>Note (rated) : ${movie.rated}<br>Score Imdb : ${movie.imdbScore}
+        <br>Réalisateur(s) : ${movie.directors}<br>Acteurs : ${movie.actors}<br>Durée (mn) : ${movie.duration}
+        <br>Pays d'origine : ${movie.countries}<br>Résultat au Box Office : ${movie.boxOfficeResult}
+        <br><br>Résumé : ${movie.abstract}</p>`;
+}
+
+/* From "https://www.w3schools.com/howto/howto_css_modals.asp" */
+function openModalWindow() {
+    /*document.querySelector('#button_top1').addEventListener('click', () => {
+        console.log('toto');
+    });*/
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("button_top1");
+
+    // Get the images that opens the modal
+    var images = document.querySelectorAll(".category img");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function() {
+        modal.style.display = "block";
+        fillModalWindow(categories.all.movies[0]);
+    }
+
+    // When the user clicks on the image, open the modal
+    images.forEach( () => {})
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-    }*/
+    } 
 }
 
 
 /* Controller */
 
 
-/* import { Category } from "./client_model"; */
+/*import { Movie, Category } from "./client_model";*/
 
-//const categoryHtmlId = [ "#top_rated img", "#action_top_rated img", "#family_top_rated img", "#comedy_top_rated img"];
 const numberOfMoviesByCategory = 7;
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
 const firstUrls = {
@@ -142,7 +183,7 @@ async function storeMovieData(id, category) {
     try {
         const value = await getMoviesData(idUrl);
         const movie = new Movie(value.id, value.image_url, value.title, value.genres, value.year,
-                                value.rated, value.imdbScore, value.directors, value.actors, value.duration,
+                                value.rated, value.imdb_score, value.directors, value.actors, value.duration,
                                 value.countries, value.worldwide_gross_income, value.long_description);
         category.addMovie(movie);
     } catch (error) {
@@ -164,6 +205,7 @@ function getAllDataForHomePage() {
         } */
         await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
         updateHomePageData();
+        openModalWindow();
     })
     .catch((error) => {
         console.log(error);
