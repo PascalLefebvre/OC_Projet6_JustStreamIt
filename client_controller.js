@@ -40,32 +40,48 @@ class Category {
     addMovie(movie) {
         this.movies.push(movie);
     }
+
+    findCorrespondingMovie(id) {
+        for (var index in this.imdbScoreMovies) {
+            if (this.imdbScoreMovies[index].id == id) {
+                return this.movies[index];
+            }
+        }
+        return null;
+    }
 }
 
 
 /* View */
 
 
-function updateHomePageData() {
+function updateHomePageData(bestMovie) {
     // Load the best movie data (all categories)
-    document.querySelector("#banniere_film img").src = categories.all.movies[0].imageUrl;
-    document.querySelector("#banniere_film h3").textContent = categories.all.movies[0].title;
-    document.querySelector("#banniere_film p").textContent = categories.all.movies[0].abstract;
+    document.querySelector("#banniere_film img").src = bestMovie.imageUrl;
+    document.querySelector("#banniere_film h3").textContent = bestMovie.title;
+    document.querySelector("#banniere_film p").textContent = bestMovie.abstract;
     // Load the top movies images by category
     const categoryImages = document.querySelectorAll(".category img");
     let i = 0;
     for (const category in categories) {
-        if (category == 'all') {
+        for (let j = 0; j < numberOfMoviesByCategory; j++) {
+            categoryImages[i].src = categories[category].imdbScoreMovies[j].imageUrl;
+            categoryImages[i].setAttribute('id', categories[category].imdbScoreMovies[j].id);
+            i++;
+        }
+        /*if (category == 'all') {
             for (let j = 1; j < numberOfMoviesByCategory+1; j++) {
                 categoryImages[i].src = categories[category].imdbScoreMovies[j].imageUrl;
+                categoryImages[i].setAttribute('id', categories[category].imdbScoreMovies[j].id);
                 i++;
             }
         } else {
             for (let j = 0; j < numberOfMoviesByCategory; j++) {
                 categoryImages[i].src = categories[category].imdbScoreMovies[j].imageUrl;
+                categoryImages[i].setAttribute('id', categories[category].imdbScoreMovies[j].id);
                 i++;
             }
-        }
+        }*/
     }
 }
 
@@ -81,7 +97,7 @@ function fillModalWindow(movie) {
 }
 
 /* From "https://www.w3schools.com/howto/howto_css_modals.asp" */
-function openModalWindow() {
+function openModalWindow(bestMovie) {
     /*document.querySelector('#button_top1').addEventListener('click', () => {
         console.log('toto');
     });*/
@@ -100,11 +116,26 @@ function openModalWindow() {
     // When the user clicks on the button, open the modal
     btn.onclick = function() {
         modal.style.display = "block";
-        fillModalWindow(categories.all.movies[0]);
+        fillModalWindow(bestMovie);
     }
 
     // When the user clicks on the image, open the modal
-    images.forEach( () => {})
+    images.forEach((image) => {
+        image.onclick = function () {
+            modal.style.display = "block";
+            var idMovie = image.getAttribute('id');
+            for (let catKey in categories) {
+                var movie = categories[catKey].findCorrespondingMovie(idMovie);
+                if (movie != null) {
+                    fillModalWindow(movie);
+                    break;
+                }
+            }
+            if (movie == null) {
+                console.log(`Pas de film correspondant à l'identifiant ${idMovie}`);
+            }
+        };
+    })
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
@@ -118,7 +149,6 @@ function openModalWindow() {
         }
     } 
 }
-
 
 /* Controller */
 
@@ -140,14 +170,16 @@ const categories = {
     comedy: new Category('comedy')
 };
 
-async function getMoviesData(url) {
+async function storeMovieData(id, category) {
+    let idUrl = titlesUrl + id;
     try {
-        const result = await fetch(url);
-        const value = await result.json();
-        return value;
+        const value = await getMoviesData(idUrl);
+        const movie = new Movie(value.id, value.image_url, value.title, value.genres, value.year,
+                                value.rated, value.imdb_score, value.directors, value.actors, value.duration,
+                                value.countries, value.worldwide_gross_income, value.long_description);
+        category.addMovie(movie);
     } catch (error) {
-        // Une erreur est survenue
-        throw error;
+        console.log(error);
     }
 }
 
@@ -160,6 +192,25 @@ function rankBestMovies(category, movies) {
                 category.imdbScoreMovies.splice(category.imdbScoreMovies.length-1);
                 break;
             }
+        }
+    }
+}
+
+async function getMoviesData(url) {
+    try {
+        const result = await fetch(url);
+        const value = await result.json();
+        return value;
+    } catch (error) {
+        // Une erreur est survenue
+        throw error;
+    }
+}
+
+async function getAllDataForModalWindows() {
+    for (let catKey in categories) {
+        for (let movie of categories[catKey].imdbScoreMovies) {
+            await storeMovieData(movie.id, categories[catKey]);
         }
     }
 }
@@ -178,34 +229,18 @@ async function searchImdbScoresMax(category, firstUrl, lastUrl = null) {
     }
 }
 
-async function storeMovieData(id, category) {
-    let idUrl = titlesUrl + id;
-    try {
-        const value = await getMoviesData(idUrl);
-        const movie = new Movie(value.id, value.image_url, value.title, value.genres, value.year,
-                                value.rated, value.imdb_score, value.directors, value.actors, value.duration,
-                                value.countries, value.worldwide_gross_income, value.long_description);
-        category.addMovie(movie);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 function getAllDataForHomePage() {
     Promise.all([searchImdbScoresMax(categories.all, firstUrls.all),
                 searchImdbScoresMax(categories.action, firstUrls.action),
                 searchImdbScoresMax(categories.family, firstUrls.family),
                 searchImdbScoresMax(categories.comedy, firstUrls.comedy)])
     .then(async () => {
-        /* for (let catKey in categories) {
-            console.log(categories[catKey].genre);
-            for (let movie of categories[catKey].imdbScoreMovies) {
-                console.log(`${movie.id} ${movie.imdbScore} ${movie.imageUrl}`);
-            }
-        } */
         await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
-        updateHomePageData();
-        openModalWindow();
+        categories.all.imdbScoreMovies.shift();
+        const bestMovie = categories.all.movies.shift();
+        updateHomePageData(bestMovie);
+        await getAllDataForModalWindows();
+        openModalWindow(bestMovie);
     })
     .catch((error) => {
         console.log(error);
