@@ -1,10 +1,13 @@
 /* Models */
 
+
+export const numberOfMoviesByCategory = 7;
+
 export class Movie {
-    constructor(id, image, title, genre, releaseDate, rated, imdbScore,
+    constructor(id, imageUrl, title, genre, releaseDate, rated, imdbScore,
                 directors, actors, duration, countries, boxOfficeResult, abstract) {
         this.id = id;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.title = title;
         this.genre = genre;
         this.releaseDate = releaseDate;
@@ -30,13 +33,27 @@ export class Category {
 
     _intializeImdbScoreMovies() {
         const emptyElement = {id: 0, imdbScore: 0, imageUrl: ''}
-        if (this.genre == 'all') { var elementsNumber = numberOfMoviesByCategory + 1 } else { var elementsNumber = numberOfMoviesByCategory }
-        for (let i = 0; i < elementsNumber; i++) {
-            this.imdbScoreMovies.push(emptyElement);
+        if (this.genre == 'all') {
+            for (let i = 0; i < numberOfMoviesByCategory+1; i++) {
+                this.imdbScoreMovies.push(emptyElement);
+            }
+        } else {
+            for (let i = 0; i < numberOfMoviesByCategory; i++) {
+                this.imdbScoreMovies.push(emptyElement);
+            }
         }
     }
 
     addMovie(movie) {
         this.movies.push(movie);
+    }
+
+    findCorrespondingMovie(id) {
+        for (var index in this.imdbScoreMovies) {
+            if (this.imdbScoreMovies[index].id == id) {
+                return this.movies[index];
+            }
+        }
+        return null;
     }
 }

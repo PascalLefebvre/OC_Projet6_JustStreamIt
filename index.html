@@ -2,25 +2,40 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
         <title>JustStreamIt</title>
+        <script src="client_controller.js" type="module" async></script>
+        <script src="client_model.js" type="module" async></script>
+        <script src="client_view.js" type="module" async></script>
     </head>
     
     <body>
         <div id="bloc_page">
             <header>
                 <h1>JustStreamIt</h1>
-                
                 <nav>
-                    <ul>
+                    <ul class="nav_link">
                         <li><a href="#">Accueil</a></li>
-                        <li><a href="#">Catégories</a></li>
+                        <li>
+                            <div class="menu">
+                                Catégories
+                            </div>
+                            <!--<div class="deroulant">
+                                <ul class="listcategories">
+                                    <li><a href="#top_rated">Films les mieux notés</a></li>
+                                    <li><a href="#action_top_rated">Action</a></li>
+                                    <li></li><a href="#family_top_rated">Famille</a></li>
+                                    <li></li><a href="#comedy_top_rated">Comédies</a></li>
+                                </ul>
+                            </div>-->
+
+                        </li>
                     </ul>
                 </nav>
             </header>
             
             <section id="banniere_film">
-                <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
+                <img src="movie_cpd.jpeg" alt="Image du film">
                 <div>
                     <h3></h3>
                     <button id="button_top1">+ d'Infos...</button>
@@ -31,70 +46,72 @@
             <section>
                 <h1>Films les mieux notés</h1>
                 <div class="category" id="top_rated">
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
                 </div>
             </section>
 
             <section>
                 <h1>Action</h1>
                 <div class="category" id="action_top_rated">
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
                 </div>
             </section>
 
             <section>
                 <h1>Famille</h1>
                 <div class="category" id="family_top_rated">
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
                 </div>
             </section>
 
             <section>
                 <h1>Comédies</h1>
                 <div class="category" id="comedy_top_rated">
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                    <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
+                    <img src="movie_cpd.jpeg" alt="Image du film">
                 </div>
             </section>
 
         </div>
 
-        <!-- The Modal (from "https://www.w3schools.com/howto/howto_css_modals.asp") -->
+        <!-- The Modal ("https://www.w3schools.com/howto/howto_css_modals.asp") -->
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <img src="https://m.media-amazon.com/images/M/MV5BMTQxNDAxNDk0Ml5BMl5BanBnXkFtZTgwMDQ0ODEwMzE@._V1_UX182_CR0,0,182,268_AL_.jpg" alt="Image du film"/>
-                <p>Some text in the Modal..</p>
+                <div class="modal-data">
+                    <img id="modal-image" src="movie_cpd.jpeg" alt="Image du film"/>
+                    <p id="modal-text">Some text in the Modal..</p>
+                </div>
             </div>
         
         </div>
 
-        <script src="client_controller.js" type="module"></script>
-        <!--<script src="client_model.js" type="module"></script>-->
+
+
     </body>
 </html>
