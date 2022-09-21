@@ -2,7 +2,7 @@
 
 
 import { Movie, Category } from "./client_model";
-import { updateHomePageData, openModalWindow } from "./client_view";
+import { updateHomePageData, moveCarouselImages,openModalWindow } from "./client_view";
 
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
 const firstUrls = {
@@ -80,10 +80,10 @@ function getAllDataForHomePage() {
                 searchImdbScoresMax(categories.comedy, firstUrls.comedy)])
     .then(async () => {
         const bestMovie = await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
-        //categories.all.deleteBestMovie;
         categories.all.imdbScoreMovies.shift();
         categories.all.movies.shift();
         updateHomePageData(bestMovie);
+        moveCarouselImages();
         await getAllDataForModalWindows();
         openModalWindow(bestMovie);
     })

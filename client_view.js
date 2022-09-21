@@ -1,24 +1,80 @@
 /* View */
 
 
-import { numberOfMoviesByCategory } from "./client_model";
 import { categories } from "./client_controller";
 
+const numberOfImagesByCarousel = 4;
+
 export function updateHomePageData(bestMovie) {
+    var arrows = document.querySelectorAll(".arrow img");
+    arrows.forEach((arrow) => {
+        if (arrow.getAttribute('id').includes('left')) {
+            arrow.style.display = 'none';
+        }
+    });
     // Load the best movie data (all categories)
     document.querySelector("#banniere_film img").src = bestMovie.imageUrl;
     document.querySelector("#banniere_film h3").textContent = bestMovie.title;
     document.querySelector("#banniere_film p").textContent = bestMovie.abstract;
     // Load the top movies images by category
-    const categoryImages = document.querySelectorAll(".category img");
+    const categoryImages = document.querySelectorAll(".carousel img");
     let i = 0;
     for (const category in categories) {
-        for (let j = 0; j < numberOfMoviesByCategory; j++) {
+        for (let j = 0; j < numberOfImagesByCarousel; j++) {
             categoryImages[i].src = categories[category].imdbScoreMovies[j].imageUrl;
             categoryImages[i].setAttribute('id', categories[category].imdbScoreMovies[j].id);
             i++;
         }
     }
+}
+
+function displayCarouselImages(category, firstIndex, leftArrow, rightArrow) {
+    const carouselImages = document.querySelectorAll(`#${category.genre} img`);
+    var j = firstIndex;
+    for (let i = 0; i < 4; i++) {
+        carouselImages[i].src = category.imdbScoreMovies[j].imageUrl;
+        carouselImages[i].setAttribute('id', category.imdbScoreMovies[j].id);
+        j++;
+    }
+    switch (firstIndex) {
+        case 0:
+            leftArrow.style.display = 'none';
+            break;
+        case 3:
+            rightArrow.style.display = 'none';
+            break;
+        default:
+            leftArrow.style.display = 'block';
+            rightArrow.style.display = 'block';
+    }
+    carouselImages[0].className = `${firstIndex}`;
+}
+
+export function moveCarouselImages() {
+    // Get the arrow images that moves the carousel
+    var arrows = document.querySelectorAll(".arrow img");
+
+    // When the user clicks on the arrow, the images move
+    arrows.forEach((arrow) => {
+        arrow.onclick = function () {
+            var arrowClass = arrow.getAttribute('id');
+            const keyWords = arrowClass.split('_');
+            const firstImageClass = document.querySelector(`#${keyWords[1]} img`);
+            switch (keyWords[0]) {
+                case 'left':
+                    var rightArrow = document.querySelector(`#right_${keyWords[1]}`);
+                    displayCarouselImages(categories[keyWords[1]], parseInt(firstImageClass.className)-1,
+                                          arrow, rightArrow);
+                    break;
+                case 'right':
+                    var leftArrow = document.querySelector(`#left_${keyWords[1]}`);
+                    displayCarouselImages(categories[keyWords[1]], parseInt(firstImageClass.className)+1,
+                                          leftArrow, arrow);
+                    break;
+            }
+            
+        }
+    });
 }
 
 function fillModalWindow(movie) {
@@ -44,7 +100,7 @@ export function openModalWindow(bestMovie) {
     var btn = document.getElementById("button_top1");
 
     // Get the images that opens the modal
-    var images = document.querySelectorAll(".category img");
+    var images = document.querySelectorAll(".carousel img");
 
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
