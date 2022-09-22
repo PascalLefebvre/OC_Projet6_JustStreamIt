@@ -2,7 +2,8 @@
 
 
 import { Movie, Category } from "./client_model";
-import { updateHomePageData, moveCarouselImages, openModalWindow, manageDropdownMenu } from "./client_view";
+import { initializeBannerData, initializeCarouselImages, moveCarouselImages,
+         manageDropdownMenu, openModalWindow } from "./client_view";
 
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
 const firstUrls = {
@@ -11,6 +12,12 @@ const firstUrls = {
     family: `${titlesUrl}?genre=Family&page=770`,
     comedy: `${titlesUrl}?genre=Comedy&page=5850`
 };
+/*const firstUrls = {
+    all:    `${titlesUrl}?page=17000`,
+    action: `${titlesUrl}?genre=Action&page=2500`,
+    family: `${titlesUrl}?genre=Family&page=700`,
+    comedy: `${titlesUrl}?genre=Comedy&page=5800`
+};*/
 export const categories = {
     all: new Category('all'),
     action: new Category('action'),
@@ -59,7 +66,7 @@ async function getAllDataForModalWindows() {
     }
 }
 
-async function searchImdbScoresMax(category, firstUrl, lastUrl = null) {
+async function searchTopMovies(category, firstUrl, lastUrl = null) {
     let nextUrl = firstUrl;
     while (nextUrl != lastUrl) {
         try {
@@ -71,30 +78,38 @@ async function searchImdbScoresMax(category, firstUrl, lastUrl = null) {
             break;
         }
     }
-}
-
-function getAllDataForHomePage() {
-    Promise.all([searchImdbScoresMax(categories.all, firstUrls.all),
-                searchImdbScoresMax(categories.action, firstUrls.action),
-                searchImdbScoresMax(categories.family, firstUrls.family),
-                searchImdbScoresMax(categories.comedy, firstUrls.comedy)])
-    .then(async () => {
+    if (category.genre == 'all') {
         const bestMovie = await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
         categories.all.imdbScoreMovies.shift();
         categories.all.movies.shift();
-        updateHomePageData(bestMovie);
+        initializeBannerData(bestMovie);
+        openModalWindow(bestMovie);
+    }
+    initializeCarouselImages(category);
+}
+
+async function getAllDataForHomePage() {
+    try {
+        await searchTopMovies(categories.all, firstUrls.all);
+        await searchTopMovies(categories.action, firstUrls.action);
+        await searchTopMovies(categories.family, firstUrls.family);
+        await searchTopMovies(categories.comedy, firstUrls.comedy);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function main() {
+    getAllDataForHomePage()
+    .then(async () => {
         moveCarouselImages();
         await getAllDataForModalWindows();
-        openModalWindow(bestMovie);
-        manageDropdownMenu();
+        openModalWindow();
     })
     .catch((error) => {
         console.log(error);
     });
-}
-
-function main() {
-    getAllDataForHomePage();
+    manageDropdownMenu();
 }
 
 main()

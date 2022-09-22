@@ -5,27 +5,24 @@ import { categories } from "./client_controller";
 
 const numberOfImagesByCarousel = 4;
 
-export function updateHomePageData(bestMovie) {
-    var arrows = document.querySelectorAll(".arrow img");
-    arrows.forEach((arrow) => {
-        if (arrow.getAttribute('id').includes('left')) {
-            arrow.style.display = 'none';
-        }
-    });
-    // Load the best movie data (all categories)
+// Load the best movie data (all categories)
+export function initializeBannerData(bestMovie) {
     document.querySelector("#banniere_film img").src = bestMovie.imageUrl;
     document.querySelector("#banniere_film h3").textContent = bestMovie.title;
     document.querySelector("#banniere_film p").textContent = bestMovie.abstract;
-    // Load the top movies images by category
-    const categoryImages = document.querySelectorAll(".carousel img");
+}
+
+export function initializeCarouselImages(category) {
+    const arrowId = `left_${category.genre}`;
+    document.getElementById(arrowId).style.display = 'none';
+    
+    const carouselImages = document.querySelectorAll(`#${category.genre} img`);
     let i = 0;
-    for (const category in categories) {
         for (let j = 0; j < numberOfImagesByCarousel; j++) {
-            categoryImages[i].src = categories[category].imdbScoreMovies[j].imageUrl;
-            categoryImages[i].setAttribute('id', categories[category].imdbScoreMovies[j].id);
+            carouselImages[i].src = category.imdbScoreMovies[j].imageUrl;
+            carouselImages[i].setAttribute('id', category.imdbScoreMovies[j].id);
             i++;
         }
-    }
 }
 
 function displayCarouselImages(category, firstIndex, leftArrow, rightArrow) {
@@ -89,43 +86,45 @@ function fillModalWindow(movie) {
 }
 
 /* Based on "https://www.w3schools.com/howto/howto_css_modals.asp" */
-export function openModalWindow(bestMovie) {
+export function openModalWindow(bestMovie = null) {
 
     // Get the modal
     var modal = document.getElementById("myModal");
 
-    // Get the button that opens the modal
-    var btn = document.getElementById("button_top1");
-
-    // Get the images that opens the modal
-    var images = document.querySelectorAll(".carousel img");
-
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks on the button, open the modal
-    btn.onclick = function() {
-        modal.style.display = "block";
-        fillModalWindow(bestMovie);
-    }
+    if (bestMovie == null) {
+        // Get the images that opens the modal
+        var images = document.querySelectorAll(".carousel img");
 
-    // When the user clicks on the image, open the modal
-    images.forEach((image) => {
-        image.onclick = function () {
-            modal.style.display = "block";
-            var idMovie = image.getAttribute('id');
-            for (let catKey in categories) {
-                var movie = categories[catKey].findCorrespondingMovie(idMovie);
-                if (movie != null) {
-                    fillModalWindow(movie);
-                    break;
+        // When the user clicks on the image, open the modal
+        images.forEach((image) => {
+            image.onclick = function () {
+                modal.style.display = "block";
+                var idMovie = image.getAttribute('id');
+                for (let catKey in categories) {
+                    var movie = categories[catKey].findCorrespondingMovie(idMovie);
+                    if (movie != null) {
+                        fillModalWindow(movie);
+                        break;
+                    }
                 }
-            }
-            if (movie == null) {
-                console.log(`Pas de film correspondant à l'identifiant ${idMovie}`);
-            }
-        };
-    })
+                if (movie == null) {
+                    console.log(`Pas de film correspondant à l'identifiant ${idMovie}`);
+                }
+            };
+        });
+    } else {
+        // Get the button that opens the modal
+        var btn = document.getElementById("button_top1");
+
+        // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+            fillModalWindow(bestMovie);
+        }
+    }
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
