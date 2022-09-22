@@ -90,9 +90,7 @@ function fillModalWindow(movie) {
 
 /* Based on "https://www.w3schools.com/howto/howto_css_modals.asp" */
 export function openModalWindow(bestMovie) {
-    /*document.querySelector('#button_top1').addEventListener('click', () => {
-        console.log('toto');
-    });*/
+
     // Get the modal
     var modal = document.getElementById("myModal");
 
@@ -135,10 +133,30 @@ export function openModalWindow(bestMovie) {
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    window.addEventListener('click', function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-    } 
+    }); 
 }
 
+/* Based on "https://www.w3schools.com/howto/howto_js_dropdown.asp" */
+export function manageDropdownMenu() {
+
+    /* When the user clicks on the button,
+       toggle between hiding and showing the dropdown content */
+    const dropdownButton = document.querySelector('.btn_menu');
+    dropdownButton.onclick = () => {
+        document.querySelector(".categories_list").classList.toggle("show");
+    }
+
+    // Close the dropdown menu if the user clicks outside of it
+    window.addEventListener('click', function(event) {
+        if (!event.target.matches('.btn_menu')) {
+            var dropdownMenu = document.querySelector(".categories_list");
+            if (dropdownMenu.classList.contains('show')) {
+                dropdownMenu.classList.remove('show');
+            }            
+        }
+    });
+}

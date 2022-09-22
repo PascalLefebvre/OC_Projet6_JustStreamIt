@@ -2,7 +2,7 @@
 
 
 import { Movie, Category } from "./client_model";
-import { updateHomePageData, moveCarouselImages,openModalWindow } from "./client_view";
+import { updateHomePageData, moveCarouselImages, openModalWindow, manageDropdownMenu } from "./client_view";
 
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
 const firstUrls = {
@@ -86,6 +86,7 @@ function getAllDataForHomePage() {
         moveCarouselImages();
         await getAllDataForModalWindows();
         openModalWindow(bestMovie);
+        manageDropdownMenu();
     })
     .catch((error) => {
         console.log(error);

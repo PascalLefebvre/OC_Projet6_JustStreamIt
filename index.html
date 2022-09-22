@@ -10,40 +10,34 @@
     </head>
     
     <body>
-        <div id="bloc_page">
-            <header>
-                <h1>JustStreamIt</h1>
-                <nav>
-                    <ul class="nav_link">
-                        <li><a href="#">Accueil</a></li>
-                        <li>
-                            <div class="menu">
-                                Catégories
-                            </div>
-                            <!--<div class="deroulant">
-                                <ul class="listcategories">
-                                    <li><a href="#top_rated">Films les mieux notés</a></li>
-                                    <li><a href="#action_top_rated">Action</a></li>
-                                    <li></li><a href="#family_top_rated">Famille</a></li>
-                                    <li></li><a href="#comedy_top_rated">Comédies</a></li>
-                                </ul>
-                            </div>-->
-
-                        </li>
-                    </ul>
-                </nav>
-            </header>
-            
+        <header>
+            <h1>JustStreamIt</h1>
+            <div class="nav_link">
+                <h1><a href="#">Accueil</a></h1>
+                <div class="deroulant">
+                    <button class="btn_menu">Catégories</button>
+                    <div class="categories_list">
+                        <br>
+                        <a href="#top_rated">Films les mieux notés</a>
+                        <a href="#action_top_rated">Action</a>
+                        <a href="#family_top_rated">Famille</a>
+                        <a href="#comedy_top_rated">Comédies</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div id="page_block">
             <section id="banniere_film">
                 <img src="movie_cpd.jpeg" alt="Image du film">
-                <div>
+                <div id="infos_film">
                     <h3></h3>
                     <button id="button_top1">+ d'Infos...</button>
                     <p></p>
                 </div>
             </section>
 
-            <h1>Films les mieux notés</h1>
+            <h1 id="top_rated">Films les mieux notés</h1>
             <section class="section_body">
 
                 <div class="arrow">
@@ -73,7 +67,7 @@
 
             </section>
 
-            <h1>Action</h1>
+            <h1 id="action_top_rated">Action</h1>
             <section class="section_body">
 
                 <div class="arrow">
@@ -103,7 +97,7 @@
 
             </section>
         
-            <h1>Famille</h1>
+            <h1 id="family_top_rated">Famille</h1>
             <section class="section_body">
 
                 <div class="arrow">
@@ -133,7 +127,7 @@
 
             </section>
 
-            <h1>Comédies</h1>
+            <h1 id="comedy_top_rated">Comédies</h1>
             <section class="section_body">
 
                 <div class="arrow">
@@ -162,7 +156,6 @@
                 </div>
 
             </section>
-
         </div>
 
         <!-- The Modal ("https://www.w3schools.com/howto/howto_css_modals.asp") -->
