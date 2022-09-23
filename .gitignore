@@ -1,6 +1,3 @@
-env/
 dist/
-node_modules/
 .parcel-cache
 .eslintrc.cjs
-package*

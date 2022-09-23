@@ -2,22 +2,33 @@
 
 
 import { Movie, Category } from "./client_model";
-import { initializeBannerData, initializeCarouselImages, moveCarouselImages,
+import { initialiseBannerData, initialiseCarouselImages, moveCarouselImages,
          manageDropdownMenu, openModalWindow } from "./client_view";
-
+// API url to access all the movies (five movies by web page).
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
+// Search movies from these API urls (to the last page by default) => short search time here...
 const firstUrls = {
     all:    `${titlesUrl}?page=17160`,
     action: `${titlesUrl}?genre=Action&page=2570`,
     family: `${titlesUrl}?genre=Family&page=770`,
     comedy: `${titlesUrl}?genre=Comedy&page=5850`
 };
+// A longer search time here...
 /*const firstUrls = {
     all:    `${titlesUrl}?page=17000`,
     action: `${titlesUrl}?genre=Action&page=2500`,
     family: `${titlesUrl}?genre=Family&page=700`,
     comedy: `${titlesUrl}?genre=Comedy&page=5800`
 };*/
+
+// The max search time (from the full database).
+/*const firstUrls = {
+    all:    `${titlesUrl}`,
+    action: `${titlesUrl}?genre=Action`,
+    family: `${titlesUrl}?genre=Family`,
+    comedy: `${titlesUrl}?genre=Comedy`
+};*/
+
 export const categories = {
     all: new Category('all'),
     action: new Category('action'),
@@ -25,7 +36,16 @@ export const categories = {
     comedy: new Category('comedy')
 };
 
+// Got movies data from the API url
+async function getMoviesData(url) {
+    const result = await fetch(url);
+    const value = await result.json();
+    return value;
+}
+
+// Store the movie data, got from the API, in a movie object and add it to his category.
 async function storeMovieData(id, category) {
+    // API url to access all the necessary movie data.
     let idUrl = titlesUrl + id;
     try {
         const value = await getMoviesData(idUrl);
@@ -39,6 +59,7 @@ async function storeMovieData(id, category) {
     }
 }
 
+// Use the "imdbScoreMovies" array to rank in descending order and store the best movies.
 function rankBestMovies(category, movies) {
     for (let movie of movies) {
         for (let i in category.imdbScoreMovies) {
@@ -52,22 +73,10 @@ function rankBestMovies(category, movies) {
     }
 }
 
-async function getMoviesData(url) {
-    const result = await fetch(url);
-    const value = await result.json();
-    return value;
-}
-
-async function getAllDataForModalWindows() {
-    for (let catKey in categories) {
-        for (let movie of categories[catKey].imdbScoreMovies) {
-            await storeMovieData(movie.id, categories[catKey]);
-        }
-    }
-}
-
+// Search for the best movies in each category and initialise the website home page.
 async function searchTopMovies(category, firstUrl, lastUrl = null) {
     let nextUrl = firstUrl;
+    // Fecth, in each category, all the API pages from the "firstUrl" url to the last API url by default.
     while (nextUrl != lastUrl) {
         try {
             let value = await getMoviesData(nextUrl);
@@ -78,14 +87,25 @@ async function searchTopMovies(category, firstUrl, lastUrl = null) {
             break;
         }
     }
+    // Initialise the home page banner from the top movie data all categories together.
     if (category.genre == 'all') {
         const bestMovie = await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
+        /* Delete the first element (the top movie) of these two arrays below
+           to keep the following seven movies (like the others categories). */
         categories.all.imdbScoreMovies.shift();
         categories.all.movies.shift();
-        initializeBannerData(bestMovie);
+        initialiseBannerData(bestMovie);
         openModalWindow(bestMovie);
     }
-    initializeCarouselImages(category);
+    initialiseCarouselImages(category);
+}
+
+async function getAllDataForModalWindows() {
+    for (let catKey in categories) {
+        for (let movie of categories[catKey].imdbScoreMovies) {
+            await storeMovieData(movie.id, categories[catKey]);
+        }
+    }
 }
 
 async function getAllDataForHomePage() {

@@ -26,18 +26,21 @@ export class Movie {
 export class Category {
     constructor(genre) {
         this.genre = genre;
-        this.movies = [];
-        this.imdbScoreMovies = [];
+        this.movies = []; // Store the movie object.
+        this.imdbScoreMovies = []; // Store the 'id', 'imdb score' and 'image url' of the movie.
         this._intializeImdbScoreMovies();
     }
 
     _intializeImdbScoreMovies() {
         const emptyElement = {id: 0, imdbScore: 0, imageUrl: ''}
         if (this.genre == 'all') {
+            /* Create an array of eight elements because we have eight movies in this category :
+               the top movie and the other seven displayed in the all category carousel. */
             for (let i = 0; i < numberOfMoviesByCategory+1; i++) {
                 this.imdbScoreMovies.push(emptyElement);
             }
         } else {
+            // Create an array of seven elements otherwise.
             for (let i = 0; i < numberOfMoviesByCategory; i++) {
                 this.imdbScoreMovies.push(emptyElement);
             }
@@ -49,7 +52,7 @@ export class Category {
     }
 
     findCorrespondingMovie(id) {
-        for (var index in this.imdbScoreMovies) {
+        for (let index in this.imdbScoreMovies) {
             if (this.imdbScoreMovies[index].id == id) {
                 return this.movies[index];
             }
