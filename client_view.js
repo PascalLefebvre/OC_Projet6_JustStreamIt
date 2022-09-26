@@ -94,11 +94,12 @@ export function moveCarouselImages() {
 function fillModalWindow(movie) {
     var modalImage = document.querySelector('.modal-content img');
     var modalContent = document.querySelector('.modal-content p');
+    let boxOfficeResult = (movie.boxOfficeResult != null) ? movie.boxOfficeResult : "non renseigné";
     modalImage.src = movie.imageUrl;
     modalContent.innerHTML = `<p>Titre : ${movie.title}<br>Genre(s) : ${movie.genres}
         <br>Date de sortie : ${movie.releaseDate}<br>Note (rated) : ${movie.rated}<br>Score Imdb : ${movie.imdbScore}
         <br>Réalisateur(s) : ${movie.directors}<br>Acteurs : ${movie.actors}<br>Durée (mn) : ${movie.duration}
-        <br>Pays d'origine : ${movie.countries}<br>Résultat au Box Office : ${movie.boxOfficeResult}
+        <br>Pays d'origine : ${movie.countries}<br>Résultat au Box Office : ${boxOfficeResult}
         <br><br>Résumé : ${movie.abstract}</p>`;
 }
 

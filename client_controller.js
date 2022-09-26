@@ -7,19 +7,19 @@ import { initialiseBannerData, initialiseCarouselImages, moveCarouselImages,
 // API url to access all the movies (five movies by web page).
 const titlesUrl = "http://localhost:8000/api/v1/titles/";
 // Search movies from these API urls (to the last page by default) => short search time here...
-const firstUrls = {
+/*const firstUrls = {
     all:    `${titlesUrl}?page=17160`,
     action: `${titlesUrl}?genre=Action&page=2570`,
     family: `${titlesUrl}?genre=Family&page=770`,
     comedy: `${titlesUrl}?genre=Comedy&page=5850`
-};
-// A longer search time here...
-/*const firstUrls = {
-    all:    `${titlesUrl}?page=17000`,
-    action: `${titlesUrl}?genre=Action&page=2500`,
-    family: `${titlesUrl}?genre=Family&page=700`,
-    comedy: `${titlesUrl}?genre=Comedy&page=5800`
 };*/
+// A longer search time here...
+const firstUrls = {
+    all:    `${titlesUrl}?page=16950`,
+    action: `${titlesUrl}?genre=Action&page=2450`,
+    family: `${titlesUrl}?genre=Family&page=650`,
+    comedy: `${titlesUrl}?genre=Comedy&page=5750`
+};
 
 // The max search time (from the full database).
 /*const firstUrls = {
@@ -109,14 +109,10 @@ async function getAllDataForModalWindows() {
 }
 
 async function getAllDataForHomePage() {
-    try {
-        await searchTopMovies(categories.all, firstUrls.all);
-        await searchTopMovies(categories.action, firstUrls.action);
-        await searchTopMovies(categories.family, firstUrls.family);
-        await searchTopMovies(categories.comedy, firstUrls.comedy);
-    } catch (error) {
-        console.log(error);
-    }
+    return Promise.all([searchTopMovies(categories.all, firstUrls.all),
+                        searchTopMovies(categories.action, firstUrls.action),
+                        searchTopMovies(categories.family, firstUrls.family),
+                        searchTopMovies(categories.comedy, firstUrls.comedy)]);
 }
 
 function main() {

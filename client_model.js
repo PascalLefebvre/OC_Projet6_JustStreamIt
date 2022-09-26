@@ -4,12 +4,12 @@
 export const numberOfMoviesByCategory = 7;
 
 export class Movie {
-    constructor(id, imageUrl, title, genre, releaseDate, rated, imdbScore,
+    constructor(id, imageUrl, title, genres, releaseDate, rated, imdbScore,
                 directors, actors, duration, countries, boxOfficeResult, abstract) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.releaseDate = releaseDate;
         this.rated = rated;
         this.imdbScore = imdbScore;
