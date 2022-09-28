@@ -1,19 +1,120 @@
-/* View */
+/* Models */
 
 
-import { categories } from "./client_controller";
+const numberOfMoviesByCategory = 7;
+
+class Movie {
+    constructor(id, imageUrl, title, genres, releaseDate, rated, imdbScore,
+                directors, actors, duration, countries, boxOfficeResult, abstract) {
+        this.id = id;
+        this.imageUrl = imageUrl;
+        this.title = title;
+        this.genres = genres;
+        this.releaseDate = releaseDate;
+        this.rated = rated;
+        this.imdbScore = imdbScore;
+        this.directors = directors;
+        this.actors = actors;
+        this.duration = duration;
+        this.countries = countries;
+        this.boxOfficeResult = boxOfficeResult;
+        this.abstract = abstract;
+    }
+}
+
+
+class Category {
+    constructor(genre) {
+        this.genre = genre;
+        this.movies = []; // Store the movie object.
+        this.imdbScoreMovies = []; // Store the 'id', 'imdb score' and 'image url' of the movie.
+        this._intializeImdbScoreMovies();
+    }
+
+    _intializeImdbScoreMovies() {
+        const emptyElement = {id: 0, imdbScore: 0, imageUrl: ''}
+        if (this.genre == 'all') {
+            /* Create an array of eight elements because we have eight movies in this category :
+               the top movie and the other seven displayed in the all category carousel. */
+            for (let i = 0; i < numberOfMoviesByCategory+1; i++) {
+                this.imdbScoreMovies.push(emptyElement);
+            }
+        } else {
+            // Create an array of seven elements otherwise.
+            for (let i = 0; i < numberOfMoviesByCategory; i++) {
+                this.imdbScoreMovies.push(emptyElement);
+            }
+        }
+    }
+
+    addMovie(movie) {
+        this.movies.push(movie);
+    }
+
+    findCorrespondingMovie(id) {
+        for (let index in this.imdbScoreMovies) {
+            if (this.imdbScoreMovies[index].id == id) {
+                return this.movies[index];
+            }
+        }
+        return null;
+    }
+}
+
+// API url to access all the movies (five movies by web page).
+const titlesUrl = "http://localhost:8000/api/v1/titles/";
+// Search movies from these API urls (to the last page by default) => short search time here...
+const firstUrls = {
+    all:    `${titlesUrl}?page=16950`,
+    action: `${titlesUrl}?genre=Action&page=2450`,
+    family: `${titlesUrl}?genre=Family&page=650`,
+    comedy: `${titlesUrl}?genre=Comedy&page=5750`
+};
+
+const categories = {
+    all: new Category('all'),
+    action: new Category('action'),
+    family: new Category('family'),
+    comedy: new Category('comedy')
+};
 
 const numberOfImagesByCarousel = 4;
 
+// Got movies data from the API url
+async function getMoviesData(url) {
+    const result = await fetch(url);
+    const value = await result.json();
+    return value;
+}
+
+// Store the movie data, got from the API, in a movie object and add it to his category.
+async function storeMovieData(id, category) {
+    // API url to access all the necessary movie data.
+    let idUrl = titlesUrl + id;
+    try {
+        const value = await getMoviesData(idUrl);
+        const movie = new Movie(value.id, value.image_url, value.title, value.genres, value.year,
+                                value.rated, value.imdb_score, value.directors, value.actors, value.duration,
+                                value.countries, value.worldwide_gross_income, value.long_description);
+        category.addMovie(movie);
+        return movie;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+/* View */
+
 // Load the best movie data (all categories).
-export function initialiseBannerData(bestMovie) {
+function initialiseBannerData(bestMovie) {
     document.querySelector("#film_banner img").src = bestMovie.imageUrl;
     document.querySelector("#film_banner h3").textContent = bestMovie.title;
     document.querySelector("#film_banner p").textContent = bestMovie.abstract;
 }
 
 // Load all the images from all the movies categories.
-export function initialiseCarouselImages(category) {
+function initialiseCarouselImages(category) {
     // Hide the left arrow (useless at the beginning of the carousel).
     const arrowId = `left_${category.genre}`;
     document.getElementById(arrowId).style.display = 'none';
@@ -61,7 +162,7 @@ function displayCarouselImages(category, firstMovieClass, leftArrow, rightArrow)
     carouselImages[0].className = `${firstMovieClass}`;
 }
 
-export function moveCarouselImages() {
+function moveCarouselImages() {
     // Get the arrows images that moves the carousel
     var arrows = document.querySelectorAll(".arrow img");
 
@@ -104,7 +205,7 @@ function fillModalWindow(movie) {
 }
 
 /* Based on "https://www.w3schools.com/howto/howto_css_modals.asp" */
-export function openModalWindow(bestMovie = null) {
+function openModalWindow(bestMovie = null) {
     // Get the modal
     var modal = document.getElementById("myModal");
     // Get the <span> element that closes the modal
@@ -155,7 +256,7 @@ export function openModalWindow(bestMovie = null) {
 }
 
 /* Based on "https://www.w3schools.com/howto/howto_js_dropdown.asp" */
-export function manageDropdownMenu() {
+function manageDropdownMenu() {
     /* When the user clicks on the button, toggle between hiding and showing the dropdown content */
     const dropdownButton = document.querySelector('.btn_menu');
     dropdownButton.onclick = () => {
@@ -171,3 +272,77 @@ export function manageDropdownMenu() {
         }
     });
 }
+
+
+/* Controller */
+
+// Use the "imdbScoreMovies" array to rank in descending order and store the best movies.
+function rankBestMovies(category, movies) {
+    for (let movie of movies) {
+        for (let i in category.imdbScoreMovies) {
+            if (movie.imdb_score > category.imdbScoreMovies[i].imdbScore) {
+                let newElement = {id: movie.id, imdbScore: movie.imdb_score, imageUrl: movie.image_url};
+                category.imdbScoreMovies.splice(i, 0, newElement);
+                category.imdbScoreMovies.splice(category.imdbScoreMovies.length-1);
+                break;
+            }
+        }
+    }
+}
+
+// Search for the best movies in each category and initialise the website home page.
+async function searchTopMovies(category, firstUrl, lastUrl = null) {
+    let nextUrl = firstUrl;
+    // Fecth, in each category, all the API pages from the "firstUrl" url to the last API url by default.
+    while (nextUrl != lastUrl) {
+        try {
+            let value = await getMoviesData(nextUrl);
+            rankBestMovies(category, value.results);
+            nextUrl = value.next;
+        } catch (error) {
+            console.log(error);
+            break;
+        }
+    }
+    // Initialise the home page banner from the top movie data all categories together.
+    if (category.genre == 'all') {
+        const bestMovie = await storeMovieData(categories.all.imdbScoreMovies[0].id, categories.all);
+        /* Delete the first element (the top movie) of these two arrays below
+           to keep the following seven movies (like the others categories). */
+        categories.all.imdbScoreMovies.shift();
+        categories.all.movies.shift();
+        initialiseBannerData(bestMovie);
+        openModalWindow(bestMovie);
+    }
+    initialiseCarouselImages(category);
+}
+
+async function getAllDataForModalWindows() {
+    for (let catKey in categories) {
+        for (let movie of categories[catKey].imdbScoreMovies) {
+            await storeMovieData(movie.id, categories[catKey]);
+        }
+    }
+}
+
+async function getAllDataForHomePage() {
+    return Promise.all([searchTopMovies(categories.all, firstUrls.all),
+                        searchTopMovies(categories.action, firstUrls.action),
+                        searchTopMovies(categories.family, firstUrls.family),
+                        searchTopMovies(categories.comedy, firstUrls.comedy)]);
+}
+
+function main() {
+    getAllDataForHomePage()
+    .then(async () => {
+        moveCarouselImages();
+        await getAllDataForModalWindows();
+        openModalWindow();
+        manageDropdownMenu();
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+}
+
+main()

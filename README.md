@@ -9,9 +9,7 @@
 	pour pouvoir faciliter la réalisation du front-end de l'application.
 	
 
-## Installation et exécution
-
-### De l'OCMovies-API
+## Installation et exécution de l'OCMovies-API
 
 * Installation depuis le [dépôt GitHub de l'OCMovies-API](https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR)
 
@@ -20,13 +18,7 @@
 	- (sans pipenv) : $ python manage.py runserver
 	- (avec pipenv) : $ pipenv run python manage.py runserver
 	
-### De l'application web
+## Exécution de l'application web
 
-* Installation de la plateforme logicielle "node.js"
-
-* Lancement du bundler 'parcel' depuis le répertoire racine de l'application :
-	
-	$ npx parcel index.html
-
-* Accéder au site web depuis un navigateur via l'adresse [http://localhost:1234]("http://localhost:1234")
+* Depuis le répertoire racine de l'application, ouvrir le fichier "index.html" avec votre navigateur.
 
